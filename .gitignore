@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Entorno
+.env
+.env.local
+*.log
+
+# IDE / OS
+.vscode/
+.idea/
+.claude/
+*.swp
+Thumbs.db
+Desktop.ini
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Backend
+backend/

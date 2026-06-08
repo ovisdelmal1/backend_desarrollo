@@ -1,0 +1,11 @@
+{
+  "name": "desarrollo_lote",
+  "private": true,
+  "scripts": {
+    "start": "cd mobile && npm start",
+    "mobile": "cd mobile && npm start"
+  },
+  "dependencies": {
+    "expo": "~54.0.0"
+  }
+}
