@@ -1,8 +1,8 @@
 const { Router } = require('express');
 const { body, validationResult } = require('express-validator');
 const { authenticate } = require('../middleware/auth');
-const upload  = require('../config/multer');
-const { getMe, submitKyc } = require('../controllers/userController');
+const upload = require('../config/multer');
+const { getMe, submitKyc, updateProfileText } = require('../controllers/userController');
 
 const router = Router();
 
@@ -28,7 +28,7 @@ router.post(
   '/me/kyc',
   upload.fields([
     { name: 'dni_front', maxCount: 1 },
-    { name: 'dni_back',  maxCount: 1 },
+    { name: 'dni_back', maxCount: 1 },
   ]),
   [
     body('first_name').trim().notEmpty().withMessage('Nombre requerido'),
@@ -37,6 +37,20 @@ router.post(
   ],
   validate,
   submitKyc
+);
+
+/**
+ * PUT /users/me
+ * Modificar datos personales
+ */
+router.put(
+  '/me',
+  [
+    body('first_name').notEmpty().withMessage('El nombre es requerido'),
+    body('last_name').notEmpty().withMessage('El apellido es requerido'),
+  ],
+  validate,
+  updateProfileText
 );
 
 module.exports = router;

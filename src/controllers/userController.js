@@ -30,6 +30,52 @@ const getMe = async (req, res) => {
 };
 
 /**
+ * PUT /users/me
+ * Body: { first_name, last_name, legal_address, country }
+ * Actualiza los datos de texto del perfil del usuario
+ */
+const updateProfileText = async (req, res) => {
+  const userId = req.user.id;
+  const { first_name, last_name, legal_address, country } = req.body;
+
+  try {
+    const [profile] = await db.execute(
+      'SELECT id FROM user_profiles WHERE user_id = ?',
+      [userId]
+    );
+
+    if (profile.length === 0) {
+      await db.execute(
+        `INSERT INTO user_profiles (user_id, first_name, last_name, legal_address, country, kyc_status)
+         VALUES (?, ?, ?, ?, ?, 'pending')`,
+        [userId, first_name || null, last_name || null, legal_address || null, country || 'Argentina']
+      );
+    } else {
+      await db.execute(
+        `UPDATE user_profiles SET
+           first_name    = COALESCE(?, first_name),
+           last_name     = COALESCE(?, last_name),
+           legal_address = COALESCE(?, legal_address),
+           country       = COALESCE(?, country)
+         WHERE user_id = ?`,
+        [
+          first_name !== undefined ? first_name : null,
+          last_name !== undefined ? last_name : null,
+          legal_address !== undefined ? legal_address : null,
+          country !== undefined ? country : null,
+          userId,
+        ]
+      );
+    }
+
+    return res.json({ message: 'Datos actualizados correctamente' });
+  } catch (err) {
+    console.error('[updateProfileText]', err);
+    return res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
+/**
  * POST /users/me/kyc
  * Body (multipart/form-data):
  *   first_name, last_name, legal_address, country
@@ -93,4 +139,4 @@ const submitKyc = async (req, res) => {
   }
 };
 
-module.exports = { getMe, submitKyc };
+module.exports = { getMe, submitKyc, updateProfileText };
